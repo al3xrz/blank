@@ -1,5 +1,5 @@
 import './App.css';
-import { TextField, Box, Grid2 as Grid, FormControl, InputLabel, Select, MenuItem, Menu, InputAdornment } from '@mui/material';
+import { TextField, Box, Grid2 as Grid, FormControl, InputLabel, Select, MenuItem, Menu, InputAdornment, Button } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
@@ -37,23 +37,62 @@ function App() {
     setAnchorElDistrict(null);
   };
 
+  const clearFields = () => {
+    setName('');
+    setSurname('');
+    setLastname('');
+    setMotherBirthDate(null);
+    setDocType('');
+    setPassportNum('');
+    setPassportSerie('');
+    setPassportOrg('');
+    setPassportDate(null);
+    setSnilsNum('');
+    setOmsNum('');
+    setSubject('');
+    setCity('');
+    setDistrict('');
+    setLocality('');
+    setStreet('');
+    setBuilding('');
+    setHouse('');
+    setBox('');
+    setApartment('');
+    setChildDateBirth(null);
+    setChildTimeBirth(null);
+    setChildWeight('');
+    setChildLength('');
+    setChildSex('');
+    setArea('');
+  }
+
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [lastName, setLastname] = useState('');
-  const [motherBirthDate, setMotherBirthDate] = useState('');
+  const [motherBirthDate, setMotherBirthDate] = useState(null);
   const [docType, setDocType] = useState('');
   const [passportNum, setPassportNum] = useState('');
   const [passportSerie, setPassportSerie] = useState('');
   const [passportOrg, setPassportOrg] = useState('');
-  const [passportDate, setPassportDate] = useState('');
+  const [passportDate, setPassportDate] = useState(null);
   const [snilsNum, setSnilsNum] = useState('');
   const [omsNum, setOmsNum] = useState('');
   const [subject, setSubject] = useState('');
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
   const [locality, setLocality] = useState('');
-
+  const [street, setStreet] = useState('');
+  const [building, setBuilding] = useState('');
+  const [house, setHouse] = useState('');
+  const [box, setBox] = useState('');
+  const [apartment, setApartment] = useState('');
+  const [childDateBirth, setChildDateBirth] = useState(null)
+  const [childTimeBirth, setChildTimeBirth] = useState(null)
+  const [childWeight, setChildWeight] = useState('')
+  const [childLength, setChildLength] = useState('')
+  const [childSex, setChildSex] = useState('');
+  const [area, setArea] = useState('')
 
 
   return (
@@ -241,13 +280,14 @@ function App() {
                 slotProps={{ textField: { size: 'small' } }}
                 label={"Дата рождения"}
                 sx={{ width: "100%" }}
-                onChange={event => setMotherBirthDate(`${event.c.day}.${event.c.month}.${event.c.year}`)}
+                value={motherBirthDate}
+                onChange={value => setMotherBirthDate(value)}
               />
             </LocalizationProvider>
           </Grid>
         </Grid>
       </Box>
-      <Box component="section" sx={{ mb: 1, p: 2, border: '1px solid lightgrey' }}>
+      <Box component="section" sx={{ mt: 1, mb: 1, p: 2, border: '1px solid lightgrey' }}>
         <Grid container spacing={2}>
           <Grid size={6}>
             <TextField
@@ -297,7 +337,9 @@ function App() {
           <Grid size={4}>
             <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="ru">
               <DatePicker slotProps={{ textField: { size: 'small' } }} label={"Паспорт выдан"} sx={{ width: "100%" }}
-                onChange={event => setPassportDate(`${event.c.day}.${event.c.month}.${event.c.year}`)} />
+                onChange={value => setPassportDate(value)}
+                value={passportDate} />
+
             </LocalizationProvider>
           </Grid>
           <Grid size={6}>
@@ -325,7 +367,7 @@ function App() {
       </Box>
       <Box component="section" sx={{ p: 2, border: '1px solid lightgrey' }} >
         <Grid container spacing={2}>
-          <Grid size={4}>
+          <Grid size={3}>
             <TextField size='small'
               id="subject"
               label="Субъект РФ"
@@ -337,8 +379,8 @@ function App() {
               onDoubleClick={() => setSubject('РЕСПУБЛИКА ДАГЕСТАН')}
             />
           </Grid>
-          <Grid size={4}>
-            <TextField helperText="Правая кнопка мыши - список"
+          <Grid size={3}>
+            <TextField helperText="Правая кнопка - список"
               size='small'
               id="city"
               label="Город"
@@ -349,9 +391,9 @@ function App() {
               onChange={event => setCity(event.target.value)}
             />
           </Grid>
-          <Grid size={4}>
+          <Grid size={3}>
             <TextField size='small'
-              helperText="Правая кнопка мыши - список"
+              helperText="Правая кнопка - список"
               id="district"
               label="Район"
               variant="outlined"
@@ -361,7 +403,7 @@ function App() {
               onChange={event => setDistrict(event.target.value)}
             />
           </Grid>
-          <Grid size={4}>
+          <Grid size={3}>
             <TextField size='small'
               id="locality"
               label="Населенный пункт"
@@ -372,35 +414,82 @@ function App() {
             />
           </Grid>
           <Grid size={4}>
-            <TextField size='small' id="outlined-basic" label="Улица" variant="outlined" sx={{ width: "100%" }} />
+            <TextField size='small'
+              id="street"
+              label="Улица"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={street}
+              onChange={event => setStreet(event.target.value)}
+            />
           </Grid>
-          <Grid size={1}>
-            <TextField size='small' id="outlined-basic" label="Строение" variant="outlined" sx={{ width: "100%" }} />
+          <Grid size={2}>
+            <TextField size='small'
+              id="building"
+              label="Строение"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={building}
+              onChange={event => setBuilding(event.target.value)}
+            />
           </Grid>
-          <Grid size={1}>
-            <TextField size='small' id="outlined-basic" label="Дом" variant="outlined" sx={{ width: "100%" }} />
+          <Grid size={2}>
+            <TextField size='small'
+              id="house"
+              label="Дом"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={house}
+              onChange={event => setHouse(event.target.value)}
+            />
           </Grid>
-          <Grid size={1}>
-            <TextField size='small' id="outlined-basic" label="Корпус" variant="outlined" sx={{ width: "100%" }} />
+          <Grid size={2}>
+            <TextField size='small'
+              id="box"
+              label="Корпус"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={box}
+              onChange={event => setBox(event.target.value)}
+            />
           </Grid>
-          <Grid size={1}>
-            <TextField size='small' id="outlined-basic" label="Квартира" variant="outlined" sx={{ width: "100%" }} />
+          <Grid size={2}>
+            <TextField size='small'
+              id="apartment"
+              label="Квартира"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={apartment}
+              onChange={event => setApartment(event.target.value)}
+            />
           </Grid>
 
         </Grid>
 
       </Box>
-      <Box component="section" sx={{ p: 2, border: '1px solid lightgrey' }} >
+      <Box component="section" sx={{ mt: 1, p: 2, border: '1px solid lightgrey' }} >
         <Grid container spacing={2}>
           <Grid size={6}>
             <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="ru">
-              <DatePicker slotProps={{ textField: { size: 'small' } }} label={"Дата рождения ребенка"} sx={{ width: "100%" }} />
+              <DatePicker slotProps={{ textField: { size: 'small' } }}
+                label={"Дата рождения ребенка"}
+                sx={{ width: "100%" }}
+                onChange={value => setChildDateBirth(value)}
+                value={childDateBirth}
+              />
             </LocalizationProvider>
 
           </Grid>
           <Grid size={6}>
             <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="ru">
-              <TimePicker slotProps={{ textField: { size: 'small' } }} label={"Время рождения ребенка"} sx={{ width: "100%" }} />
+              <TimePicker slotProps={{ textField: { size: 'small' } }}
+                label={"Время рождения ребенка"}
+                sx={{ width: "100%" }}
+                onChange={value => setChildTimeBirth(value)}
+                value={childTimeBirth}
+
+              />
+
             </LocalizationProvider>
           </Grid>
           <Grid size={6}>
@@ -414,30 +503,39 @@ function App() {
                   endAdornment: <InputAdornment position="end">г</InputAdornment>,
                 },
               }}
+              value={childWeight}
+              onChange={event => setChildWeight(event.target.value)}
 
             />
           </Grid>
           <Grid size={6}>
-            <TextField size='small' 
-            id="outlined-basic" 
-            label="Длина" 
-            variant="outlined" 
-            sx={{ width: "100%" }} 
-            slotProps={{
-              input: {
-                endAdornment: <InputAdornment position="end">см</InputAdornment>,
-              },
-            }}
+            <TextField size='small'
+              id="outlined-basic"
+              label="Длина"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              slotProps={{
+                input: {
+                  endAdornment: <InputAdornment position="end">см</InputAdornment>,
+                },
+              }}
+              value={childLength}
+              onChange={event => setChildLength(event.target.value)}
             />
           </Grid>
           <Grid size={6}>
             <FormControl fullWidth>
-              <InputLabel size='small' id="demo-simple-select-label">Пол</InputLabel>
+              <InputLabel size='small'
+                id="sex"
+                value={childSex}
+              >Пол</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="Пол"
                 size='small'
+                onChange={event => setChildSex(event.target.value)}
+                value={childSex}
               >
                 <MenuItem value={'Мужской'}>Мужской</MenuItem>
                 <MenuItem value={'Женский'}>Женский</MenuItem>
@@ -446,12 +544,17 @@ function App() {
           </Grid>
           <Grid size={6}>
             <FormControl fullWidth>
-              <InputLabel size='small' id="demo-simple-select-label">Местность</InputLabel>
+              <InputLabel size='small'
+                id="area"
+                value={area}
+              >Местность</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="Местность"
                 size='small'
+                value={area}
+                onChange={event => setArea(event.target.value)}
               >
                 <MenuItem value={'Городская'}>Городская</MenuItem>
                 <MenuItem value={'Сельская'}>Сельская</MenuItem>
@@ -462,8 +565,17 @@ function App() {
 
         </Grid>
 
+
       </Box>
 
+      <Box component="section" sx={{ mt: 1, p: 2, border: '1px solid lightgrey' }}  >
+        <Button
+          variant="contained"
+          sx={{ width: "200px", margin: "1px" }}
+          onClick={() => clearFields()}
+        >очистить</Button>
+        <Button color="secondary" variant="contained" sx={{ width: "200px", margin: "1px" }}>сформировать</Button>
+      </Box>
 
     </div>
   );
