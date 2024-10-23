@@ -574,7 +574,38 @@ function App() {
           sx={{ width: "200px", margin: "1px" }}
           onClick={() => clearFields()}
         >очистить</Button>
-        <Button color="secondary" variant="contained" sx={{ width: "200px", margin: "1px" }}>сформировать</Button>
+        <Button color="secondary"
+          variant="contained"
+          sx={{ width: "200px", margin: "1px" }}
+          onClick={() => window.ipcRenderer.invoke('buildDoc', {
+            name,
+            surname,
+            lastName,
+            motherBirthDate,
+            docType,
+            passportNum,
+            passportSerie,
+            passportOrg,
+            passportDate,
+            snilsNum,
+            omsNum,
+            subject,
+            city,
+            district,
+            locality,
+            street,
+            building,
+            house,
+            box,
+            apartment,
+            childDateBirth,
+            childTimeBirth,
+            childWeight,
+            childLength,
+            childSex,
+            area,
+          })}
+        >сформировать</Button>
       </Box>
 
     </div>
