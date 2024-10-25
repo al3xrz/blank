@@ -2,11 +2,14 @@ const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
 const fs = require("fs");
 const path = require("path");
+const { shell } = require('electron')
 
-function fillTemplate() {
+
+function fillTemplate(params) {
     // Load the docx file as binary content
+    console.log(params)
     const content = fs.readFileSync(
-        path.resolve(__dirname, "..", "templates", "template1.docx"),
+        path.resolve(__dirname, "..", "templates", "template2.docx"),
         "binary"
     );
     const zip = new PizZip(content);
@@ -16,48 +19,10 @@ function fillTemplate() {
     });
 
     doc.render({
-        name : "xsdxas",
-        city : "sdzcsdfcsd"
-    //     name: `
-    // <w:p>
-    //     <w:r>
-    //         <w:rPr>
-    //             <w:color w:val="FF0000"/>
-    //         </w:rPr>
-    //         <w:t>
-    //             My custom
-    //         </w:t>
-    //     </w:r>
-    //     <w:r>
-    //         <w:rPr>
-    //             <w:color w:val="00FF00"/>
-    //         </w:rPr>
-    //         <w:t>
-    //             XML paragraph
-    //         </w:t>
-    //     </w:r>
-    // </w:p>
-    // `,
-    //     city: `
-    // <w:p>
-    //     <w:r>
-    //         <w:rPr>
-    //             <w:color w:val="FF0000"/>
-    //         </w:rPr>
-    //         <w:t>
-    //             My custom
-    //         </w:t>
-    //     </w:r>
-    //     <w:r>
-    //         <w:rPr>
-    //             <w:color w:val="00FF00"/>
-    //         </w:rPr>
-    //         <w:t>
-    //             XML paragraph
-    //         </w:t>
-    //     </w:r>
-    // </w:p>
-    // `,
+        name : params.name,
+        surname : params.surname,
+        lastname : params.lastname
+    
     });
 
     const buf = doc.getZip().generate({
@@ -66,8 +31,9 @@ function fillTemplate() {
     });
     // buf is a nodejs Buffer, you can either write it to a
     // file or res.send it with express for example.
-    fs.writeFileSync(path.resolve(__dirname, "output.docx"), buf);
-
+    const outputFile = path.resolve(__dirname, '..', 'results',`output${Date.now()}.docx` );
+    fs.writeFileSync(outputFile, buf);
+    shell.openExternal(outputFile);
 }
 
 module.exports = {

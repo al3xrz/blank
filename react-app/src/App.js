@@ -69,7 +69,7 @@ function App() {
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
-  const [lastName, setLastname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [motherBirthDate, setMotherBirthDate] = useState(null);
   const [docType, setDocType] = useState('');
   const [passportNum, setPassportNum] = useState('');
@@ -91,8 +91,8 @@ function App() {
   const [childTimeBirth, setChildTimeBirth] = useState(null)
   const [childWeight, setChildWeight] = useState('')
   const [childLength, setChildLength] = useState('')
-  const [childSex, setChildSex] = useState('');
-  const [area, setArea] = useState('')
+  const [childSex, setChildSex] = useState(''); // мужской - 1, женский - 2
+  const [area, setArea] = useState('') // городская - 1,  сельская -  2
 
 
   return (
@@ -271,7 +271,7 @@ function App() {
               label="Отчество"
               variant="outlined"
               sx={{ width: "100%" }}
-              value={lastName}
+              value={lastname}
               onChange={event => setLastname(event.target.value)} />
           </Grid>
           <Grid size={12}>
@@ -580,7 +580,7 @@ function App() {
           onClick={() => window.ipcRenderer.invoke('buildDoc', {
             name,
             surname,
-            lastName,
+            lastname,
             motherBirthDate,
             docType,
             passportNum,
