@@ -9,7 +9,18 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "build" : "electron-builder"
+  },
+  "win" : {
+    "target" : "nsis"
+  },
+  "build" : {
+    "appId": "com.blank",
+    "productName" : "Бланк",
+    "files" : [
+      "**/*"
+    ] 
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.5.0",
@@ -20,7 +31,8 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
     "@electron-forge/plugin-fuses": "^7.5.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "33.0.1"
+    "electron": "33.0.1",
+    "electron-builder": "^25.1.8"
   },
   "keywords": [],
   "author": {
@@ -33,9 +45,5 @@
     "docxtemplater": "^3.51.1",
     "electron-squirrel-startup": "^1.0.1",
     "pizzip": "^3.1.7"
-  },
-  "files": [
-    "**/*",
-    "!results/*"
-    ]
+  }
 }

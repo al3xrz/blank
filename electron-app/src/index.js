@@ -23,7 +23,7 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   // ... for  production
-  mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'web', 'index.html'));
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
