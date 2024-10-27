@@ -1,39 +1,65 @@
-const PizZip = require("pizzip");
-const Docxtemplater = require("docxtemplater");
-const fs = require("fs");
-const path = require("path");
+const fs = require("fs")
+const path = require('path')
+const { patchDocument, PatchType, TextRun } = require("docx");
 const { shell } = require('electron')
 
 
+function paragraph(text, underline = false, bold = false) {
+    return (
+        {
+            type: PatchType.PARAGRAPH,
+            children: [new TextRun({
+                text,
+                underline,
+                bold
+            })],
+
+        }
+    )
+}
+
+
+
 function fillTemplate(params) {
-    // Load the docx file as binary content
     console.log(params)
-    const content = fs.readFileSync(
-        path.resolve(__dirname, "..", "templates", "template2.docx"),
-        "binary"
-    );
-    const zip = new PizZip(content);
-    const doc = new Docxtemplater(zip, {
-        paragraphLoop: true,
-        linebreaks: true,
+    // if(params.childDateBirth.c.day<10)params.childDateBirth.c.day=`0${params.childDateBirth.c.day}`
+    // if(params.childDateBirth.c.month<10)params.childDateBirth.c.month=`0${params.childDateBirth.c.month}`
+    // if(params.childTimeBirth.c.hour<10)params.childTimeBirth.c.hour=`0${params.childTimeBirth.c.hour}`
+    // if(params.childTimeBirth.c.minute<10)params.childTimeBirth.c.minute=`0${params.childTimeBirth.c.minute}`
+    // if(params.motherBirthDate.c.day<10)params.motherBirthDate.c.day=`0${params.motherBirthDate.c.day}`
+    // if(params.motherBirthDate.c.month<10)params.motherBirthDate.c.month=`0${params.motherBirthDate.c.month}`
+    const currentYear = new Date().getFullYear().toString();
+    const currentMonth = new Date().getMonth().toString().padStart(2, "0");
+    const currentDay = new Date().getDate().toString().padStart(2, "0");
+
+
+    patchDocument({
+        outputType: "nodebuffer",
+        data: fs.readFileSync(
+            path.join(process.cwd(), "templates", "template2.docx")),
+        patches: {
+            dayNow: paragraph(currentDay, false, true),
+            monthNow: paragraph(currentMonth, false, true),
+            yearNow: paragraph(currentYear, false, true),
+            motherName: paragraph(`${params.surname} ${params.name} ${params.lastname}`),
+            childDateBirthDay: paragraph(`${params.childDateBirth?.c.day.toString().padStart(2, "0") || "    "}`, true),
+            childDateBirthMonth: paragraph(`${params.childDateBirth?.c.month.toString().padStart(2, "0") || "    "}`, true),
+            childDateBirthYear: paragraph(`${params.childDateBirth?.c.year || "        "}`, true),
+            childTimeBirthHour: paragraph(`${params.childTimeBirth?.c.hour.toString().padStart(2, "0") || "    "}`, true),
+            childTimeBirthMin: paragraph(`${params.childTimeBirth?.c.minute.toString().padStart(2, "0") || "    "}`,true),
+            motherBirthDateDay: paragraph(`${params.motherBirthDate?.c.day.toString().padStart(2, "0") || "    "}`,true),
+            motherBirthDateMonth: paragraph(`${params.motherBirthDate?.c.month.toString().padStart(2, "0") || "    "}`,true),
+            motherBirthDateYear: paragraph(`${params.motherBirthDate?.c.year || "        "}`,true),
+            
+            
+
+        },
+    }).then((buf) => {
+        const outputFile = path.join(process.cwd(), "results", `output${Date.now()}.docx`);
+        fs.writeFileSync(outputFile, buf);
+        shell.openExternal(outputFile);
     });
 
-    doc.render({
-        name : params.name,
-        surname : params.surname,
-        lastname : params.lastname
-    
-    });
-
-    const buf = doc.getZip().generate({
-        type: "nodebuffer",
-        compression: "DEFLATE",
-    });
-    // buf is a nodejs Buffer, you can either write it to a
-    // file or res.send it with express for example.
-    const outputFile = path.resolve(__dirname, '..', 'results',`output${Date.now()}.docx` );
-    fs.writeFileSync(outputFile, buf);
-    shell.openExternal(outputFile);
 }
 
 module.exports = {

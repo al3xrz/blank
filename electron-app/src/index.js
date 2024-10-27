@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { fillTemplate } = require('./lib/templater2')
+const { fillTemplate } = require('./lib/templater')
 
 if (require('electron-squirrel-startup')) {
   app.quit();
