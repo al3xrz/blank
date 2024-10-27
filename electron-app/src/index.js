@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
-const { fillTemplate } = require('./lib/templater')
+const { fillTemplate } = require('./lib/templater2')
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -19,11 +19,11 @@ const createWindow = () => {
 
   });
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.loadURL('http://localhost:3000');
+  // mainWindow.loadURL('http://localhost:3000');
 
   // and load the index.html of the app.
   // ... for  production
-  // mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
