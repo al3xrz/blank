@@ -1,0 +1,36 @@
+{
+  "name": "electron-app-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --ia32",
+    "build:debug": "set DEBUG=electron-builder && electron-builder --win --ia32"
+  },
+  "win": {
+    "target": "nsis"
+  },
+  "build": {
+    "appId": "com.blank",
+    "productName": "Бланк",
+    "files": [
+      "src/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "docx": "^9.0.2"
+  }
+}
