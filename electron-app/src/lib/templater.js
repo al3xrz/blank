@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require('path')
 const { patchDocument, PatchType, TextRun } = require("docx");
 const { shell } = require('electron')
+const PRODUCTION = false
 
 
 function paragraph(text, underline = false, bold = false) {
@@ -22,21 +23,26 @@ function paragraph(text, underline = false, bold = false) {
 
 function fillTemplate(params) {
     console.log(params)
-    // if(params.childDateBirth.c.day<10)params.childDateBirth.c.day=`0${params.childDateBirth.c.day}`
-    // if(params.childDateBirth.c.month<10)params.childDateBirth.c.month=`0${params.childDateBirth.c.month}`
-    // if(params.childTimeBirth.c.hour<10)params.childTimeBirth.c.hour=`0${params.childTimeBirth.c.hour}`
-    // if(params.childTimeBirth.c.minute<10)params.childTimeBirth.c.minute=`0${params.childTimeBirth.c.minute}`
-    // if(params.motherBirthDate.c.day<10)params.motherBirthDate.c.day=`0${params.motherBirthDate.c.day}`
-    // if(params.motherBirthDate.c.month<10)params.motherBirthDate.c.month=`0${params.motherBirthDate.c.month}`
+    console.log(__dirname)
     const currentYear = new Date().getFullYear().toString();
     const currentMonth = new Date().getMonth().toString().padStart(2, "0");
     const currentDay = new Date().getDate().toString().padStart(2, "0");
 
+    // const fullPathArray =  process.execPath.split(path.sep)
+    // fullPathArray.pop()
+    // console.log(fullPathArray)
+    
+    // let fullPath = path.join(...fullPathArray)
+    // if(!PRODUCTION) fullPath = process.cwd()
+    fullPath = `C:\\Users\\az\\Desktop\\CODE\\blank\\ы-electron-app`
+        console.log(fullPath)
+    let x= 'проверка кириллицы'.toString('cp1251')
+    console.log(x);
 
     patchDocument({
         outputType: "nodebuffer",
         data: fs.readFileSync(
-            path.join(process.cwd(), "templates", "template2.docx")),
+            path.resolve(fullPath, "templates", "template2.docx")),
         patches: {
             dayNow: paragraph(currentDay, false, true),
             monthNow: paragraph(currentMonth, false, true),
@@ -50,16 +56,37 @@ function fillTemplate(params) {
             motherBirthDateDay: paragraph(`${params.motherBirthDate?.c.day.toString().padStart(2, "0") || "    "}`,true),
             motherBirthDateMonth: paragraph(`${params.motherBirthDate?.c.month.toString().padStart(2, "0") || "    "}`,true),
             motherBirthDateYear: paragraph(`${params.motherBirthDate?.c.year || "        "}`,true),
-            
-            
+            docType : paragraph(`${params.docType || "        "}`,true),
+            passportSerie : paragraph(`${params.passportSerie || "        "}`,true),
+            passportNum : paragraph(`${params.passportNum || "        "}`,true),
+            passportOrg : paragraph(`${params.passportOrg || "        "}`,true),
+            passportDate : paragraph(`${params.passportDate?.c.day.toString().padStart(2, "0") || "   "}.${params.passportDate?.c.month.toString().padStart(2, "0") || "   "}.${params.passportDate?.c.year.toString()|| "   "}`,true),
+            snilsNum : paragraph(`${params.snilsNum || ""}`,false),
+            omsNum : paragraph(`${params.omsNum || ""}`,false),
+            subject: paragraph(`${params.subject || "                  "}`,true),
+            district : paragraph(`${params.district || "                  "}`,true),
+            city : paragraph(`${params.city || "                 "}`,true),
+            locality : paragraph(`${params.locality || "                  "}`,true),
+            street : paragraph(`${params.street || "                  "}`,true),
+            house : paragraph(`${params.house || "    "}`,true),
+            apartment : paragraph(`${params.apartment || "    "}`,true),
+            building : paragraph(`${params.building || "    "}`,true),
+            box : paragraph(`${params.apartment || "                  "}`,true),
+            area1 : paragraph('Городская', params.area === "Городская"),
+            area2 : paragraph('Сельская', params.area === "Сельская"),
+            childWeight : paragraph(`${params.childWeight || ""}`, true),
+            childLength : paragraph(`${params.childLength || ""}`,true),
+            childSex1 : paragraph('Мужской', params.childSex === "Мужской"),
+            childSex2 : paragraph('Женский', params.childSex === "Женский"),
 
         },
     }).then((buf) => {
-        const outputFile = path.join(process.cwd(), "results", `output${Date.now()}.docx`);
+        console.log(process.cwd())
+        const outputFile = path.join(fullPath, "results", `output${Date.now()}.docx`);
         fs.writeFileSync(outputFile, buf);
         shell.openExternal(outputFile);
     });
-
+ 
 }
 
 module.exports = {
