@@ -5,11 +5,13 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
+    "debug": "electron --trace-warnings .",
     "build": "electron-builder --win --ia32",
     "build:debug": "set DEBUG=electron-builder && electron-builder --win --ia32"
   },
   "win": {
-    "target": "nsis"
+    "target": "nsis",
+     "icon": "assets/icon.ico"
   },
   "build": {
     "appId": "com.blank",

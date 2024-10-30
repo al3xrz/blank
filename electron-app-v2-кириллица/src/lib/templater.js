@@ -36,12 +36,19 @@ function fillTemplate(params) {
     outputType: "nodebuffer",
     data: fs.readFileSync(templatePath),
     patches: {
-      dayNow: paragraph(currentDay, false, true),
-      monthNow: paragraph(currentMonth, false, true),
-      yearNow: paragraph(currentYear, false, true),
+      dayNowB: paragraph(currentDay, false, true),
+      monthNowB: paragraph(currentMonth, false, true),
+      yearNowB: paragraph(currentYear, false, true),
+      dayNow: paragraph(currentDay, false, false),
+      monthNow: paragraph(currentMonth, false, false),
+      yearNow: paragraph(currentYear, false, false),
       motherName: paragraph(
         `${params.surname} ${params.name} ${params.lastname}`
       ),
+      motherNameFill: paragraph(
+        `${params.surname} ${params.name} ${params.lastname}`.padStart(2, "_").padEnd(90,'_'), true, false
+      ),
+      
       childDateBirthDay: paragraph(
         `${params.childDateBirth?.c.day.toString().padStart(2, "0") || "    "}`,
         true
@@ -84,10 +91,20 @@ function fillTemplate(params) {
         `${params.motherBirthDate?.c.year || "        "}`,
         true
       ),
-      docType: paragraph(`${params.docType || "        "}`, true),
-      passportSerie: paragraph(`${params.passportSerie || "        "}`, true),
-      passportNum: paragraph(`${params.passportNum || "        "}`, true),
-      passportOrg: paragraph(`${params.passportOrg || "        "}`, true),
+      docTypeU: paragraph(`${params.docType || "        "}`, true),
+      passportSerieU: paragraph(`${params.passportSerie || "        "}`, true),
+      passportNumU: paragraph(`${params.passportNum || "        "}`, true),
+      passportOrgU: paragraph(`${params.passportOrg || "        "}`, true),
+      passportDateU: paragraph(
+        `${params.passportDate?.c.day.toString().padStart(2, "0") || "   "}.${
+          params.passportDate?.c.month.toString().padStart(2, "0") || "   "
+        }.${params.passportDate?.c.year.toString() || "   "}`,
+        true
+      ),
+      docType: paragraph(`${params.docType || "        "}`, false),
+      passportSerie: paragraph(`${params.passportSerie || "        "}`, false),
+      passportNum: paragraph(`${params.passportNum || "        "}`, false),
+      passportOrg: paragraph(`${params.passportOrg || "        "}`, false),
       passportDate: paragraph(
         `${params.passportDate?.c.day.toString().padStart(2, "0") || "   "}.${
           params.passportDate?.c.month.toString().padStart(2, "0") || "   "
@@ -104,7 +121,7 @@ function fillTemplate(params) {
       house: paragraph(`${params.house || "    "}`, true),
       apartment: paragraph(`${params.apartment || "    "}`, true),
       building: paragraph(`${params.building || "    "}`, true),
-      box: paragraph(`${params.apartment || "                  "}`, true),
+      box: paragraph(`${params.box || "                  "}`, true),
       area1: paragraph("Городская", params.area === "Городская"),
       area2: paragraph("Сельская", params.area === "Сельская"),
       childWeight: paragraph(`${params.childWeight || ""}`, true),

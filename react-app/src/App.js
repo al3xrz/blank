@@ -3,10 +3,84 @@ import { TextField, Box, Grid2 as Grid, FormControl, InputLabel, Select, MenuIte
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 
 function App() {
+
+  const handleFocus = useCallback((e) => {
+    activeInputRef.current = e.target; // Сохраняем ссылку на текущий активный элемент
+    console.log(activeInputRef.current)
+  }, []);
+
+
+
+  const activeInputRef = useRef(null); // Ссылка на текущее активное поле ввода
+
+  function setFromClipboard(name, clipboardText) {
+    switch (name) {
+      case 'name': setName(clipboardText); break;
+      case 'surname': setSurname(clipboardText); break;
+      case 'lastname': setLastname(clipboardText); break;
+      case 'docType': setDocType(clipboardText); break;
+      case 'passportNum': setPassportNum(clipboardText); break;
+      case 'passportSerie': setPassportSerie(clipboardText); break;
+      case 'passportOrg': setPassportOrg(clipboardText); break;
+      case 'snilsNum': setSnilsNum(clipboardText); break;
+      case 'omsNum': setOmsNum(clipboardText); break;
+      case 'locality': setLocality(clipboardText); break;
+      case 'street': setStreet(clipboardText); break;
+      case 'building': setBuilding(clipboardText); break;
+      case 'house': setHouse(clipboardText); break;
+      case 'box': setBox(clipboardText); break;
+      case 'apartment': setApartment(clipboardText); break;
+      case 'childWeight': setChildWeight(clipboardText); break;
+      case 'childLength': setChildLength(clipboardText); break;
+      default: break;
+    }
+  }
+
+
+
+  useEffect(() => {
+
+
+    // Слушаем команды из контекстного меню Electron
+
+    window.ipcRenderer.onContextMenuCommand((command) => {
+      console.log("in useeffect oncontext-menu-command-start command:", command);
+      const activeField = activeInputRef.current;
+      console.log("in useeffect oncontext-menu-commanad-start activeField:", activeField);
+      if (!activeField) return;
+
+      if (command === 'copy') {
+        const selectedText = window.getSelection().toString();
+        if (selectedText) {
+          window.ipcRenderer.copyToClipboard(selectedText);
+        }
+      } else if (command === 'paste') {
+        const { name } = activeField;
+        window.ipcRenderer.pasteFromClipboard((clipboardText) => {
+          console.log("clipboard-text", clipboardText)
+          console.log("active-element-name", name)
+          setFromClipboard(name, clipboardText)
+        });
+      }
+    });
+  }, []);
+
+
+
+  const [anchorElSubject, setAnchorElsubject] = useState(null);
+  const openSubject = Boolean(anchorElSubject);
+  const handleClicksubject = (event) => {
+    setAnchorElsubject(event.currentTarget);
+  };
+  const handleCloseSubject = () => {
+    setAnchorElsubject(null);
+  };
+
+
 
   const [anchorElpassportOrg, setAnchorElPassportOrg] = useState(null);
   const open = Boolean(anchorElpassportOrg);
@@ -97,6 +171,33 @@ function App() {
 
   return (
     <div className="App">
+
+      <Menu
+        id="subjectMenu"
+        anchorEl={anchorElSubject}
+        open={openSubject}
+        onClose={handleCloseSubject}
+        slotProps={{
+          paper: {
+            style: {
+              maxHeight: 48 * 6,
+            },
+          },
+        }}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {
+          [
+            'ЧЕЧЕНСКАЯ РЕСПУБЛИКА',
+          ].map(subject => (
+            <MenuItem key={subject} onClick={() => { handleCloseSubject(); setSubject(subject) }}>{subject}</MenuItem>
+          ))
+        }
+
+      </Menu>
+
 
       <Menu
         id="districtMenu"
@@ -248,31 +349,38 @@ function App() {
       <Box component="section" sx={{ mb: 1, p: 2, border: '1px solid lightgrey' }}>
         <Grid container spacing={2}>
           <Grid size={4}>
-            <TextField id="name"
+            <TextField id="surname"
+              name='surname'
               label="Фамилия"
               variant="outlined"
               sx={{ width: "100%" }}
               size='small'
               value={surname}
-              onChange={event => setSurname(event.target.value)} />
+              onChange={event => setSurname(event.target.value)}
+              onFocus={handleFocus} />
+
           </Grid>
           <Grid size={4}>
             <TextField size='small'
               id="name"
+              name="name"
               label="Имя"
               variant="outlined"
               sx={{ width: "100%" }}
               value={name}
-              onChange={event => setName(event.target.value)} />
+              onChange={event => setName(event.target.value)}
+              onFocus={handleFocus} />
           </Grid>
           <Grid size={4}>
             <TextField size='small'
               id="lastname"
+              name="lastname"
               label="Отчество"
               variant="outlined"
               sx={{ width: "100%" }}
               value={lastname}
-              onChange={event => setLastname(event.target.value)} />
+              onChange={event => setLastname(event.target.value)}
+              onFocus={handleFocus} />
           </Grid>
           <Grid size={12}>
             <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="ru">
@@ -292,7 +400,8 @@ function App() {
           <Grid size={6}>
             <TextField
               size='small'
-              id="outlined-basic"
+              id="docType"
+              name="docType"
               label="Документ удостоверяющий личность"
               variant="outlined"
               sx={{ width: "100%" }}
@@ -300,31 +409,37 @@ function App() {
               value={docType}
               onChange={event => { setDocType(event.target.value); console.log('changed') }}
               onDoubleClick={() => setDocType('Паспорт гражданина РФ')}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={3}>
             <TextField size='small'
               id="passportNum"
+              name="passportNum"
               label="Номер"
               variant="outlined"
               sx={{ width: "100%" }}
               value={passportNum}
               onChange={event => setPassportNum(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={3}>
             <TextField size='small'
               id="passportSerie"
+              name="passportSerie"
               label="Серия"
               variant="outlined"
               sx={{ width: "100%" }}
               value={passportSerie}
               onChange={event => setPassportSerie(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={8}>
             <TextField size='small'
-              id="selectPassportOrganization"
+              id="passportOrg"
+              name="passportOrg"
               label="Наименование выдавшего органа"
               variant="outlined"
               sx={{ width: "100%" }}
@@ -332,6 +447,7 @@ function App() {
               onContextMenu={event => { event.preventDefault(); console.log('contextmenu'); handleClickPassportOrg(event); }}
               value={passportOrg}
               onChange={event => setPassportOrg(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={4}>
@@ -345,21 +461,25 @@ function App() {
           <Grid size={6}>
             <TextField size='small'
               id="snilsNum"
+              name="snilsNum"
               label="СНИЛС"
               variant="outlined"
               sx={{ width: "100%" }}
               value={snilsNum}
               onChange={event => setSnilsNum(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={6}>
             <TextField size='small'
               id="omsNum"
+              name="omsNum"
               label="Полис  ОМС"
               variant="outlined"
               sx={{ width: "100%" }}
               value={omsNum}
               onChange={event => setOmsNum(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
 
@@ -370,6 +490,7 @@ function App() {
           <Grid size={3}>
             <TextField size='small'
               id="subject"
+              name="subject"
               label="Субъект РФ"
               variant="outlined"
               sx={{ width: "100%" }}
@@ -377,11 +498,15 @@ function App() {
               value={subject}
               onChange={event => setSubject(event.target.value)}
               onDoubleClick={() => setSubject('РЕСПУБЛИКА ДАГЕСТАН')}
+              onContextMenu={event => { event.preventDefault(); console.log('contextmenu'); handleClicksubject(event); }}
+              onFocus={handleFocus}
+
             />
           </Grid>
           <Grid size={3}>
             <TextField helperText="Правая кнопка - список"
               size='small'
+              name="city"
               id="city"
               label="Город"
               variant="outlined"
@@ -389,78 +514,93 @@ function App() {
               onContextMenu={event => { event.preventDefault(); console.log('contextmenu'); handleClickCity(event); }}
               value={city}
               onChange={event => setCity(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={3}>
             <TextField size='small'
               helperText="Правая кнопка - список"
               id="district"
+              name="district"
               label="Район"
               variant="outlined"
               sx={{ width: "100%" }}
               onContextMenu={event => { event.preventDefault(); console.log('contextmenu'); handleClickDistrict(event); }}
               value={district}
               onChange={event => setDistrict(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={3}>
             <TextField size='small'
               id="locality"
+              name="locality"
               label="Населенный пункт"
               variant="outlined"
               sx={{ width: "100%" }}
               value={locality}
               onChange={event => setLocality(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={4}>
             <TextField size='small'
               id="street"
+              name="street"
               label="Улица"
               variant="outlined"
               sx={{ width: "100%" }}
               value={street}
               onChange={event => setStreet(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={2}>
             <TextField size='small'
               id="building"
+              name="building"
               label="Строение"
               variant="outlined"
               sx={{ width: "100%" }}
               value={building}
               onChange={event => setBuilding(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={2}>
             <TextField size='small'
               id="house"
+              name="house"
               label="Дом"
               variant="outlined"
               sx={{ width: "100%" }}
               value={house}
               onChange={event => setHouse(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={2}>
             <TextField size='small'
               id="box"
+              name="box"
               label="Корпус"
               variant="outlined"
               sx={{ width: "100%" }}
               value={box}
               onChange={event => setBox(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={2}>
             <TextField size='small'
               id="apartment"
+              name="apartment"
               label="Квартира"
               variant="outlined"
               sx={{ width: "100%" }}
               value={apartment}
               onChange={event => setApartment(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
 
@@ -495,6 +635,7 @@ function App() {
           <Grid size={6}>
             <TextField size='small'
               id="weight"
+              name="childWeight"
               label="Вес"
               variant="outlined"
               sx={{ width: "100%" }}
@@ -505,12 +646,14 @@ function App() {
               }}
               value={childWeight}
               onChange={event => setChildWeight(event.target.value)}
+              onFocus={handleFocus}
 
             />
           </Grid>
           <Grid size={6}>
             <TextField size='small'
-              id="outlined-basic"
+              id="childLength"
+              name="childLength"
               label="Длина"
               variant="outlined"
               sx={{ width: "100%" }}
@@ -521,6 +664,7 @@ function App() {
               }}
               value={childLength}
               onChange={event => setChildLength(event.target.value)}
+              onFocus={handleFocus}
             />
           </Grid>
           <Grid size={6}>
