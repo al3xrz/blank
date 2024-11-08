@@ -414,18 +414,6 @@ function App() {
           </Grid>
           <Grid size={3}>
             <TextField size='small'
-              id="passportNum"
-              name="passportNum"
-              label="Номер"
-              variant="outlined"
-              sx={{ width: "100%" }}
-              value={passportNum}
-              onChange={event => setPassportNum(event.target.value)}
-              onFocus={handleFocus}
-            />
-          </Grid>
-          <Grid size={3}>
-            <TextField size='small'
               id="passportSerie"
               name="passportSerie"
               label="Серия"
@@ -436,6 +424,19 @@ function App() {
               onFocus={handleFocus}
             />
           </Grid>
+          <Grid size={3}>
+            <TextField size='small'
+              id="passportNum"
+              name="passportNum"
+              label="Номер"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              value={passportNum}
+              onChange={event => setPassportNum(event.target.value)}
+              onFocus={handleFocus}
+            />
+          </Grid>
+         
           <Grid size={8}>
             <TextField size='small'
               id="passportOrg"
