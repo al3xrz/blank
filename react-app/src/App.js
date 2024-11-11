@@ -4,6 +4,7 @@ import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
 import { useState, useEffect, useRef, useCallback } from 'react';
+const { DateTime } = require("luxon");
 
 
 function App() {
@@ -140,7 +141,7 @@ function App() {
     setArea('');
   }
 
-
+  const [documentDate, setDocumentDate] = useState(DateTime.now());
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -348,6 +349,19 @@ function App() {
 
       <Box component="section" sx={{ mb: 1, p: 2, border: '1px solid lightgrey' }}>
         <Grid container spacing={2}>
+        <Grid size={12}>
+            <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale="ru">
+              <DatePicker
+                slotProps={{ textField: { size: 'small' } }}
+                label={"Дата выдачи свидетельства"}
+                sx={{ width: "100%" }}
+                value={documentDate}
+                onChange={value => setDocumentDate(value)}
+               
+              />
+            </LocalizationProvider>
+          </Grid>
+
           <Grid size={4}>
             <TextField id="surname"
               name='surname'
@@ -723,6 +737,7 @@ function App() {
           variant="contained"
           sx={{ width: "200px", margin: "1px" }}
           onClick={() => window.ipcRenderer.invoke('buildDoc', {
+            documentDate,
             name,
             surname,
             lastname,

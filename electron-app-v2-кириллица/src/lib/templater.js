@@ -3,7 +3,6 @@ const path = require("path");
 const { patchDocument, PatchType, TextRun } = require("docx");
 const { shell } = require("electron");
 
-
 // const PRODUCTION = false
 
 function paragraph(text, underline = false, bold = false) {
@@ -20,12 +19,19 @@ function paragraph(text, underline = false, bold = false) {
 }
 
 function fillTemplate(params) {
-  const currentYear = new Date().getFullYear().toString();
-  const currentMonth = new Date().getMonth().toString().padStart(2, "0");
-  const currentDay = new Date().getDate().toString().padStart(2, "0");
+  console.log(params.documentDate);
+  const currentYear =
+    params.documentDate?.c.year.toString() ||
+    new Date().getFullYear().toString();
+  const currentMonth =
+    params.documentDate?.c.month?.toString().padStart(2, "0") ||
+    (new Date().getMonth() + 1).toString().padStart(2, "0");
+  const currentDay =
+    params.documentDate?.c.day.toString().padStart(2, "0") ||
+    new Date().getDate().toString().padStart(2, "0");
 
   const fullPath = process.cwd();
- 
+
   templatePath = path.join(fullPath, "templates", "template2.docx");
   resultPath = path.join(fullPath, "results", `output${Date.now()}.docx`);
 
@@ -46,9 +52,13 @@ function fillTemplate(params) {
         `${params.surname} ${params.name} ${params.lastname}`
       ),
       motherNameFill: paragraph(
-        `${params.surname} ${params.name} ${params.lastname}`.padStart(2, "_").padEnd(90,'_'), true, false
+        `${params.surname} ${params.name} ${params.lastname}`
+          .padStart(2, "_")
+          .padEnd(90, "_"),
+        true,
+        false
       ),
-      
+
       childDateBirthDay: paragraph(
         `${params.childDateBirth?.c.day.toString().padStart(2, "0") || "    "}`,
         true
@@ -131,7 +141,7 @@ function fillTemplate(params) {
     },
   })
     .then((buf) => {
-    //   console.log(buf);
+      //   console.log(buf);
       fs.writeFileSync(resultPath, buf);
       shell.openPath(resultPath);
     })
